@@ -1,6 +1,7 @@
 #Deployment with 1 master node, 1 data node and 1 ingest node.
 
 ```
+cat <<EOF | kubectl apply -f -
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
@@ -32,5 +33,6 @@ spec:
       node.ingest: true
       xpack.ml.enabled: true
       node.store.allow_mmap: false
+EOF
 ```
 ​
