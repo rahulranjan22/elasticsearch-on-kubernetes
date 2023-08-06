@@ -16,5 +16,49 @@ spec:
 EOF
 ```
 
+#List details
+kubectl get pods
+kubectl get pvc
+​kubectl get pv
 
-​
+#Port forward
+kubectl port-forward service/rranjan-elasticsearch-es-http 9200
+
+#Elastic Password
+
+PASSWORD=$(kubectl get secret rranjan-elasticsearch-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
+
+# Access elasticsearch api via curl 
+curl -u "elastic:$PASSWORD" -k "https://localhost:9200"
+
+#Deploy Kibana
+```
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: rranjan-elasticsearch
+spec:
+  version: 8.9.0
+  count: 1
+  elasticsearchRef:
+    name: rranjan-elasticsearch
+​```
+
+#List available services
+kubectl get svc
+
+## Port forward kibana cluster ip service
+
+Open https://localhost:5601 in your browser, Login as the elastic user. The password can be obtained with the following command:
+kubectl get secret quickstart-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+kubectl port-forward service/rranjan-elasticsearch-kb-http 5601
+
+# Get password for elastic user
+
+PASSWORD=$(kubectl get secret rranjan-elasticsearch-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
+
+#List PWD
+echo $PASSWORD
+
+
+
