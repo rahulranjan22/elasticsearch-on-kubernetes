@@ -1,0 +1,81 @@
+# Pre-Installation Setup
+#Install custom resource definitions:
+kubectl create -f https://download.elastic.co/downloads/eck/2.9.0/crds.yaml
+
+#Install the operator with its RBAC rules:
+#Below command will create a namespace called `elastic-system` and install `elastic operator`. 
+  
+kubectl apply -f https://download.elastic.co/downloads/eck/2.9.0/operator.yaml
+
+#You can monitor the operator logs using the below command
+
+kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
+
+#Check namespace
+kubectl get all -n elastic-system
+*************************************************************************
+
+#Deploy Single Node Elasticsearch Cluster
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: quickstart
+spec:
+  version: 8.9.0
+  nodeSets:
+  - name: default
+    count: 1
+    config:
+      node.store.allow_mmap: false
+EOF
+```
+
+#Monitor cluster health and creation progress
+        
+kubectl get elasticsearch
+
+#Access the pod log 
+kubectl logs -f quickstart-es-default-0
+
+#Request Elasticsearch access
+kubectl get service quickstart-es-http
+
+# Get the credentials
+PASSWORD=$(kubectl get secret quickstart-es-elastic-user -o go-template='{{.data.elastic | base64decode}}')
+
+#Use the following command in a separate terminal:
+kubectl port-forward service/quickstart-es-http 9200
+        
+#Get the elasticsearch endpoint
+curl -u "elastic:$PASSWORD" -k "https://localhost:9200"
+
+#Deploy a Kibana instance
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: quickstart
+spec:
+  version: 8.9.0
+  count: 1
+  elasticsearchRef:
+    name: quickstart
+EOF
+```
+
+#Monitor Kibana Health
+      
+kubectl get kibana
+kubectl get pod --selector='kibana.k8s.elastic.co/name=quickstart'
+
+#Use kubectl port-forward to access Kibana:
+kubectl port-forward service/quickstart-kb-http 5601
+
+Open https://localhost:5601 in your browser, Login as the elastic user. The password can be obtained with the following command:
+kubectl get secret quickstart-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+
