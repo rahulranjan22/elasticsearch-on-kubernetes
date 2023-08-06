@@ -1,0 +1,36 @@
+#Deployment with 1 master node, 1 data node and 1 ingest node.
+
+```
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: rranjan-elasticsearch
+spec:
+  version: 8.9.0
+  nodeSets:
+  - name: master
+    count: 1
+    config:
+      node.master: true
+      node.data: false
+      node.ingest: false
+      xpack.ml.enabled: true
+      node.store.allow_mmap: false
+  - name: data
+    count: 1
+    config:
+      node.master: false
+      node.data: true
+      node.ingest: false
+      xpack.ml.enabled: true
+      node.store.allow_mmap: false
+  - name: client
+    count: 1
+    config:
+      node.master: false
+      node.data: false
+      node.ingest: true
+      xpack.ml.enabled: true
+      node.store.allow_mmap: false
+```
+​
