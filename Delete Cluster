@@ -1,0 +1,10 @@
+#Command to uninstall the quickstart/rranjan-elasticsearch resources:
+
+kubectl delete elasticsearch quickstart  or kubectl delete elasticsearch rranjan-elasticsearch
+kubectl delete kibana quickstart  or kubectl delete kibana rranjan-elasticsearch
+
+#This should delete all underlying Elasticsearch and Kibana resources (pods, secrets, etc.).
+
+#Then to uninstall the operator itself:
+
+kubectl delete -f https://download.elastic.co/downloads/eck/2.9.0/all-in-one.yaml
