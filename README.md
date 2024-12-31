@@ -1,4 +1,4 @@
-# elasticsearch-on-kubernetes
+# elasticsearch-on-Kubernetes
 Deploy ElasticSearch on Kubernetes 
 Before deploying Elasticsearch on Kubernetes, you must install the ECK operator within the Kubernetes cluster. 
 
@@ -8,4 +8,5 @@ There are two primary methods for installing ECK into a Kubernetes cluster.
 2. Install ECK using the Helm chart.
 
 We will use the YAML manifest for installation.
+
 
